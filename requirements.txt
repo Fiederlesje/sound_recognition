@@ -1,0 +1,9 @@
+torch
+torchaudio
+torchvision
+matplotlib
+boto3
+requests
+IPython
+soundfile
+pandas
