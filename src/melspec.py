@@ -1,58 +1,73 @@
-import torch
+import os
+import torch 
+from torch.utils.data import Dataset
+import pandas as pd
 import torchaudio
 
-import io
-import os
-import tarfile
-import tempfile
+class Zachte_G_Dataset(Dataset):
 
-import boto3
-import matplotlib.pyplot as plt
-import requests
-from botocore import UNSIGNED
-from botocore.config import Config
-from IPython.display import Audio
-from torchaudio.utils import download_asset
+    def __init__(self, annotations_file, audio_dir, transformation,
+                 target_sample_rate):
+        self.annotations = pd.read_csv(annotations_file)
+        self.audio_dir = audio_dir
+        self.transformation = transformation
+        self.target_sample_rate = target_sample_rate
 
-import torchaudio.functional as F
-import torchaudio.transforms as T
+    def __len__(self):
+        return len(self.annotations)
 
+    def __getitem__(self, index):
+        # load audiofiles in dirs to dataset
+        audio_sample_path = self._get_audio_sample_path(index)
+        label = self._get_audio_sample_label(index)
+        signal, sr = torchaudio.load(audio_sample_path)
+        #signal -> (num channels, samples) (2, 32000) -> (1, 16000)
+        # audio to uniform sample rate
+        signal = self._resample_if_necessary(signal, sr)
+        # audio terugbrengen tot mono
+        signal = self._mix_down_if_necessary(signal)
+        # tensor waveform transformeren tot mel spectrogram
+        signal = self.transformation(signal)
 
-HARD_WAV = download_asset("/Users/fiederlesje/git/sound_recognition/resources/harde_g/AUDIO-2025-02-11-19-23-31.wav")
-ZACHT_WAV = download_asset("/Users/fiederlesje/git/sound_recognition/resources/zachte_g/AUDIO-2025-02-11-19-23-39.wav")
+        return signal, label
+    
+    def _resample_if_necessary(self, signal, sr):
+        if sr != self.target_sample_rate:
+            resampler = torchaudio.transforms.Resample(sr, self.target_sample_rate)
+            signal = resampler(signal)
+        return signal
 
+    def _mix_down_if_necessary(self, signal):
+        if signal.shape[0] > 1:
+            signal = torch.mean(signal, dim=0, keepdim=True)
+        return signal
 
-# Define transform
-spectrogram = T.Spectrogram(n_fft=512)
+    def _get_audio_sample_path(self, index):
+        fold = f"fold{self.annotations.iloc[index, 3]}"
+        path = os.path.join(self.audio_dir, fold, self.annotations.iloc[
+            index, 0])
+        return path
 
-# Perform transform
-spec = spectrogram(HARD_WAV)
+    def _get_audio_sample_label(self, index):
+        return self.annotations.iloc[index, 4]
 
-def plot_spectrogram(specgram, title=None, ylabel="freq_bin", ax=None):
-    if ax is None:
-        _, ax = plt.subplots(1, 1)
-    if title is not None:
-        ax.set_title(title)
-    ax.set_ylabel(ylabel)
-    ax.imshow(librosa.power_to_db(specgram), origin="lower", aspect="auto", interpolation="nearest")
+if __name__ == "__main__":
+    AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files'
+    ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/annotations_sound_recognition.csv'
+    SAMPLE_RATE = 16000
 
-n_fft = 1024
-win_length = None
-hop_length = 512
-n_mels = 128
+    mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+        sample_rate=SAMPLE_RATE,
+        n_fft=1024,
+        hop_length=512,
+        n_mels=64
+    )
 
-mel_spectrogram = T.MelSpectrogram(
-    sample_rate=sample_rate,
-    n_fft=n_fft,
-    win_length=win_length,
-    hop_length=hop_length,
-    center=True,
-    pad_mode="reflect",
-    power=2.0,
-    norm="slaney",
-    n_mels=n_mels,
-    mel_scale="htk",
-)
+    #ms = mel_spectrogram(signal)
 
-melspec = mel_spectrogram(HARD_WAV)
-plot_spectrogram(melspec[0], title="MelSpectrogram - torchaudio", ylabel="mel freq")
+    usd = Zachte_G_Dataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram, SAMPLE_RATE)
+    print(f"There are {len(usd)} samples in the dataset.")
+    signal, label = usd[0]
+    print(signal)
+    print(label)
+
