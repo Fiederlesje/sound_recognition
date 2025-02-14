@@ -7,3 +7,4 @@ requests
 IPython
 soundfile
 pandas
+torchsummary
