@@ -17,13 +17,6 @@ from torchaudio.utils import download_asset
 import torchaudio.functional as F
 import torchaudio.transforms as T
 
-
-HARD_G_DIR = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'harde_g')
-SOFT_G_DIR = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'zachte_g')
-
-
-
-
 HARD_G_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'harde_g', 'AUDIO-2025-02-11-19-23-31.wav')
 SOFT_G_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'zachte_g', 'AUDIO-2025-02-11-19-23-39.wav')
 
@@ -33,7 +26,7 @@ metadata = torchaudio.info(SOFT_G_FILE)
 print(metadata)
 
 
-waveform, sample_rate = torchaudio.load(HARD_WAV)
+waveform, sample_rate = torchaudio.load(HARD_G_FILE)
 
 def plot_waveform(waveform, sample_rate):
     waveform = waveform.numpy()
