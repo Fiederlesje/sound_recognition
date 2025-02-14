@@ -52,7 +52,8 @@ class CNNNetwork(nn.Module):
             nn.MaxPool2d(kernel_size=2)
         )
         self.flatten = nn.Flatten()
-        self.linear = nn.Linear(128 * 5 * 4, 10)
+        # 128 channels in output, 5 * 4 ?, 2 = aantal classes
+        self.linear = nn.Linear(128 * 5 * 4, 2)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input_data):
@@ -67,4 +68,5 @@ class CNNNetwork(nn.Module):
 
 if __name__ == "__main__":
     cnn = CNNNetwork()
+    # 1 = channels in input (mono), 64 = aantal mels, 44 = ?
     summary(cnn(), (1, 64, 44))

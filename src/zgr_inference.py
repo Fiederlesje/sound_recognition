@@ -29,7 +29,7 @@ if __name__ == "__main__":
     state_dict = torch.load("cnnnet.pth")
     cnn.load_state_dict(state_dict)
 
-    # load urban sound dataset dataset
+    # load zachte g dataset dataset
     mel_spectrogram = torchaudio.transforms.MelSpectrogram(
         sample_rate=SAMPLE_RATE,
         n_fft=1024,
@@ -45,11 +45,18 @@ if __name__ == "__main__":
                             "cpu")
 
 
-    # get a sample from the urban sound dataset for inference
-    input, target = zgd[0][0], zgd[0][1] # [batch size, num_channels, fr, time]
-    input.unsqueeze_(0)
 
-    # make an inference
-    predicted, expected = predict(cnn, input, target,
-                                  class_mapping)
-    print(f"Predicted: '{predicted}', expected: '{expected}'")
+    audio_num = 0
+    for i in range(26):
+        # get a sample from the urban sound dataset for inference
+        input, target = zgd[audio_num][0], zgd[audio_num][1] # [batch size, num_channels, fr, time]
+        input.unsqueeze_(0)
+
+        #print(input)
+        #print(target)
+        # make an inference
+        predicted, expected = predict(cnn, input, target,
+                                    class_mapping)
+        print(f"Predicted: '{predicted}', expected: '{expected}'")
+
+        audio_num += 1
