@@ -84,5 +84,5 @@ if __name__ == "__main__":
     train(cnn, train_dataloader, loss_fn, optimiser, device, EPOCHS)
 
     # save model
-    torch.save(cnn.state_dict(), "feedforwardnet.pth")
-    print("Trained feed forward net saved at feedforwardnet.pth")
+    torch.save(cnn.state_dict(), "cnnnet.pth")
+    print("Trained feed forward net saved at cnnnet.pth")

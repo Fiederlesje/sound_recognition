@@ -65,7 +65,6 @@ class CNNNetwork(nn.Module):
         predictions = self.softmax(logits)
         return predictions
 
-
 if __name__ == "__main__":
     cnn = CNNNetwork()
     summary(cnn(), (1, 64, 44))

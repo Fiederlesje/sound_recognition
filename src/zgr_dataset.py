@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #ms = mel_spectrogram(signal)
 
     zgd = Zachte_G_Dataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram, SAMPLE_RATE, NUM_SAMPLES, device)
-    print(f"There are {len(usd)} samples in the dataset.")
+    print(f"There are {len(zgd)} samples in the dataset.")
     signal, label = zgd[0]
     print(signal)
     print(label)
