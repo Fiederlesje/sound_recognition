@@ -3,20 +3,18 @@ import torchaudio
 from torch import nn
 from torch.utils.data import DataLoader
 
-from zgr_dataset import Zachte_G_Dataset
+import zgr_subject_settings as zss
+from zgr_dataset import Zgr_Dataset
 from zgr_cnn import CNNNetwork
 
 
-BATCH_SIZE = 128
+BATCH_SIZE = 3
 EPOCHS = 10
 LEARNING_RATE = 0.001
 
-AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu'
-ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/individu/annotations_sound_recognition.csv'
-# sample rate and num samples zelfde, betekent dat we 1 seconde van het geluidsfragment gebruiken 
-# dit is voldoende voor het woord gigantisch
-SAMPLE_RATE = 22050
-NUM_SAMPLES = 22050
+AUDIO_DIR, ANNOTATIONS_FILE = zss.file_location('train')
+SAMPLE_RATE, NUM_SAMPLES = zss.model_settings('train')
+
 
 def create_data_loader(train_data, batch_size):
     train_dataloader = DataLoader(train_data, batch_size=batch_size)
@@ -65,7 +63,7 @@ if __name__ == "__main__":
         n_mels=64
     )
 
-    zgd = Zachte_G_Dataset(ANNOTATIONS_FILE,
+    zgd = Zgr_Dataset(ANNOTATIONS_FILE,
                             AUDIO_DIR,
                             mel_spectrogram,
                             SAMPLE_RATE,
@@ -87,5 +85,7 @@ if __name__ == "__main__":
     train(cnn, train_dataloader, loss_fn, optimiser, device, EPOCHS)
 
     # save model
-    torch.save(cnn.state_dict(), "cnnnet.pth")
-    print("Trained feed forward net saved at cnnnet.pth")
+    SUBJECT, MODEL_DIR = zss.model_location()
+    MODEL_FILE = f'{MODEL_DIR}cnnnet_{SUBJECT}.pth'
+    torch.save(cnn.state_dict(), MODEL_FILE)
+    print(f'Trained feed forward net saved at {MODEL_FILE}')

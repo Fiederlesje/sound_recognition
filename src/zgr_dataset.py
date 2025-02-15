@@ -4,7 +4,9 @@ from torch.utils.data import Dataset
 import pandas as pd
 import torchaudio
 
-class Zachte_G_Dataset(Dataset):
+import zgr_subject_settings as zss
+
+class Zgr_Dataset(Dataset):
 
     def __init__(self, annotations_file, audio_dir, transformation,
                  target_sample_rate, num_samples, device):
@@ -66,8 +68,10 @@ class Zachte_G_Dataset(Dataset):
         return signal
 
     def _get_audio_sample_path(self, index):
-        fold = f"fold{self.annotations.iloc[index, 3]}"
-        path = os.path.join(self.audio_dir, fold, self.annotations.iloc[
+        #fold = f"fold{self.annotations.iloc[index, 3]}"
+        #path = os.path.join(self.audio_dir, fold, self.annotations.iloc[
+        #    index, 0])
+        path = os.path.join(self.audio_dir, self.annotations.iloc[
             index, 0])
         return path
 
@@ -77,12 +81,8 @@ class Zachte_G_Dataset(Dataset):
 
 
 if __name__ == "__main__":
-    AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu'
-    ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/individu/annotations_sound_recognition.csv'
-    # langste sample = 1,35 sec, kortste sample is 0.98, sample rate = 48000, right padding tot 1,35 sec
-    # 48000 * 1,35 s = 64800
-    SAMPLE_RATE = 48000
-    NUM_SAMPLES = 64800
+    AUDIO_DIR, ANNOTATIONS_FILE = zss.file_location('train')
+    SAMPLE_RATE, NUM_SAMPLES = zss.model_settings('plot')
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     #ms = mel_spectrogram(signal)
 
-    zgd = Zachte_G_Dataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram, SAMPLE_RATE, NUM_SAMPLES, device)
+    zgd = Zgr_Dataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram, SAMPLE_RATE, NUM_SAMPLES, device)
     print(f"There are {len(zgd)} samples in the dataset.")
     signal, label = zgd[0]
     print(signal)
