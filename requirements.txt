@@ -8,3 +8,6 @@ IPython
 soundfile
 pandas
 torchsummary
+librosa
+standard-aifc 
+standard-sunau

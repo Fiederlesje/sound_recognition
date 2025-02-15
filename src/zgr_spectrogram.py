@@ -17,16 +17,19 @@ from torchaudio.utils import download_asset
 import torchaudio.functional as F
 import torchaudio.transforms as T
 
-HARD_G_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'harde_g', 'AUDIO-2025-02-11-19-23-31.wav')
-SOFT_G_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources', 'zachte_g', 'AUDIO-2025-02-11-19-23-39.wav')
+HARD_ZACHT = 'hard'
 
-metadata = torchaudio.info(HARD_G_FILE)
+if HARD_ZACHT == 'zacht':
+    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold1/gigantisch_001.wav')
+    AUDIO_LABEL = 'zachte g'
+else:
+    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold2/gigantisch_002.wav')
+    AUDIO_LABEL = 'harde g'
+
+metadata = torchaudio.info(AUDIO_FILE)
 print(metadata)
-metadata = torchaudio.info(SOFT_G_FILE)
-print(metadata)
 
-
-waveform, sample_rate = torchaudio.load(HARD_G_FILE)
+waveform, sample_rate = torchaudio.load(AUDIO_FILE)
 
 def plot_waveform(waveform, sample_rate):
     waveform = waveform.numpy()
@@ -42,9 +45,9 @@ def plot_waveform(waveform, sample_rate):
         axes[c].grid(True)
         if num_channels > 1:
             axes[c].set_ylabel(f"Channel {c+1}")
-    figure.suptitle("waveform")
+    figure.suptitle("waveform - " + AUDIO_LABEL)
 
-def plot_specgram(waveform, sample_rate, title="Spectrogram"):
+def plot_specgram(waveform, sample_rate, title="Spectrogram - " + AUDIO_LABEL):
     waveform = waveform.numpy()
 
     num_channels, num_frames = waveform.shape
