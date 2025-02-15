@@ -11,8 +11,8 @@ BATCH_SIZE = 128
 EPOCHS = 10
 LEARNING_RATE = 0.001
 
-AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files'
-ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/annotations_sound_recognition.csv'
+AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu'
+ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/individu/annotations_sound_recognition.csv'
 # sample rate and num samples zelfde, betekent dat we 1 seconde van het geluidsfragment gebruiken 
 # dit is voldoende voor het woord gigantisch
 SAMPLE_RATE = 22050
@@ -57,6 +57,9 @@ if __name__ == "__main__":
     # instantiating our dataset object and create data loader
     mel_spectrogram = torchaudio.transforms.MelSpectrogram(
         sample_rate=SAMPLE_RATE,
+        # n_fft, specifies number of bins for frequency, hoger nummer -> meer bins
+        #2 x zoveel als voorbeeld, want sample rate is 2 x zo veel
+        #!!!!
         n_fft=1024,
         hop_length=512,
         n_mels=64

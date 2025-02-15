@@ -4,19 +4,19 @@ import matplotlib.pyplot as plt
 import soundfile as sf
 import librosa
 
-HARD_ZACHT = 'zacht'
+HARD_ZACHT = 'hard'
 
 if HARD_ZACHT == 'zacht':
-    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold1/gigantisch_001.wav')
+    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold1/gigantisch_z_002.wav')
     AUDIO_LABEL = 'zachte g'
 else:
-    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold2/gigantisch_002.wav')
+    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold2/gigantisch_h_002.wav')
     AUDIO_LABEL = 'harde g'
 
 #waveform, sample rate
 #sr = 48000
-#y, sr = librosa.load(SOFT_G_FILE, sr=48000)
-y, sr = librosa.load(AUDIO_FILE)
+y, sr = librosa.load(AUDIO_FILE, sr=48000)
+#y, sr = librosa.load(AUDIO_FILE)
 
 print(y)
 print(sr)
@@ -27,7 +27,7 @@ S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
 #spectrogram
 fig, ax = plt.subplots()
 img = librosa.display.specshow(S_db, x_axis='time', y_axis='linear', ax=ax)
-ax.set(title=AUDIO_LABEL)
+ax.set(title='Spectogram - ' + AUDIO_LABEL)
 fig.colorbar(img, ax=ax, format="%+2.f dB")
 
 #mel spectrogram

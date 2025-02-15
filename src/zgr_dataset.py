@@ -39,14 +39,14 @@ class Zachte_G_Dataset(Dataset):
         signal, sr = torchaudio.load(audio_sample_path)
         # use gpu if possible
         signal = signal.to(self.device)
-        #signal -> (num channels, samples) (2, 32000) -> (1, 16000)
+        #signal -> (num channels, samples) -> (1, 48000 * 1,35 sec = 64800 samples) 
         # audio to uniform sample rate
         signal = self._resample_if_necessary(signal, sr)
         # audio terugbrengen tot mono
         signal = self._mix_down_if_necessary(signal)
         # audio files vergelijkbare lengte maken voor vergelijking
         signal = self._cut_if_necessary(signal)
-        # als na de cut minder samples zijn dan opgegeven, het geluidsfragment is korter dan 1 sec in ons geval, 
+        # als na de cut minder samples zijn dan opgegeven, het geluidsfragment is korter dan 1,35 sec in ons geval, 
         # dan wordt deze aangevuld
         signal = self._right_pad_if_necessary(signal)
         # tensor waveform transformeren, in dit geval tot mel spectrogram
@@ -74,13 +74,15 @@ class Zachte_G_Dataset(Dataset):
     def _get_audio_sample_label(self, index):
         return self.annotations.iloc[index, 4]
 
+
+
 if __name__ == "__main__":
-    AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files'
-    ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/annotations_sound_recognition.csv'
-    # sample rate and num samples zelfde, betekent dat we 1 seconde van het geluidsfragment gebruiken 
-    # dit is voldoende voor het woord gigantisch
-    SAMPLE_RATE = 22050
-    NUM_SAMPLES = 22050
+    AUDIO_DIR = '/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu'
+    ANNOTATIONS_FILE = '/Users/fiederlesje/git/sound_recognition/resources/annotations/individu/annotations_sound_recognition.csv'
+    # langste sample = 1,35 sec, kortste sample is 0.98, sample rate = 48000, right padding tot 1,35 sec
+    # 48000 * 1,35 s = 64800
+    SAMPLE_RATE = 48000
+    NUM_SAMPLES = 64800
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -90,9 +92,12 @@ if __name__ == "__main__":
 
     mel_spectrogram = torchaudio.transforms.MelSpectrogram(
         sample_rate=SAMPLE_RATE,
-        n_fft=1024,
-        hop_length=512,
-        n_mels=64
+        # n_fft, specifies number of bins for frequency, hoger nummer -> meer bins
+        #2 x zoveel als voorbeeld, want sample rate is 2 x zo veel
+        #!!!!
+        n_fft=2048,
+        hop_length=1024,
+        n_mels=128
     )
 
     #ms = mel_spectrogram(signal)
