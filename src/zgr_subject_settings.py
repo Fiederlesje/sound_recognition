@@ -1,5 +1,6 @@
 
-subject = 'individu'
+#subject = 'individu'
+subject = 'youtube'
 
 def file_location(stage: str) -> tuple[str, str]:
     zgr_pad =  'resources/'
