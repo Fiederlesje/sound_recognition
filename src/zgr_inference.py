@@ -50,11 +50,11 @@ if __name__ == "__main__":
                             "cpu")
 
     tensor_pos = 0
-    label_pod = 1
+    label_pos = 1
   
     for audio_data in zgt:
         # get a sample from the urban sound dataset for inference
-        input, target = audio_data[tensor_pos], audio_data[label_pod] # [batch size, num_channels, fr, time]
+        input, target = audio_data[tensor_pos], audio_data[label_pos] # [batch size, num_channels, fr, time]
         input.unsqueeze_(0)
 
         #print(input)

@@ -53,7 +53,7 @@ class CNNNetwork(nn.Module):
         )
         self.flatten = nn.Flatten()
         # 128 channels in output, 5 * 4 ?, 2 = aantal classes
-        self.linear = nn.Linear(128 * 5 * 4, 10)
+        self.linear = nn.Linear(128 * 5 * 4, 2)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input_data):
