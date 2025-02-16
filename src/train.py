@@ -3,17 +3,18 @@ import torchaudio
 from torch import nn
 from torch.utils.data import DataLoader
 
-import zgr_subject_settings as zss
-from zgr_dataset import Zgr_Dataset
-from zgr_cnn import CNNNetwork
+from urbansounddataset import UrbanSoundDataset
+from cnn import CNNNetwork
 
 
 BATCH_SIZE = 128
 EPOCHS = 10
 LEARNING_RATE = 0.001
 
-AUDIO_DIR, ANNOTATIONS_FILE = zss.file_location('train')
-SAMPLE_RATE, NUM_SAMPLES = zss.model_settings('train')
+ANNOTATIONS_FILE = "/home/valerio/datasets/UrbanSound8K/metadata/UrbanSound8K.csv"
+AUDIO_DIR = "/home/valerio/datasets/UrbanSound8K/audio"
+SAMPLE_RATE = 22050
+NUM_SAMPLES = 22050
 
 
 def create_data_loader(train_data, batch_size):
@@ -55,22 +56,19 @@ if __name__ == "__main__":
     # instantiating our dataset object and create data loader
     mel_spectrogram = torchaudio.transforms.MelSpectrogram(
         sample_rate=SAMPLE_RATE,
-        # n_fft, specifies number of bins for frequency, hoger nummer -> meer bins
-        #2 x zoveel als voorbeeld, want sample rate is 2 x zo veel
-        #!!!!
         n_fft=1024,
         hop_length=512,
         n_mels=64
     )
 
-    zgd = Zgr_Dataset(ANNOTATIONS_FILE,
+    usd = UrbanSoundDataset(ANNOTATIONS_FILE,
                             AUDIO_DIR,
                             mel_spectrogram,
                             SAMPLE_RATE,
                             NUM_SAMPLES,
                             device)
     
-    train_dataloader = create_data_loader(zgd, BATCH_SIZE)
+    train_dataloader = create_data_loader(usd, BATCH_SIZE)
 
     # construct model and assign it to device
     cnn = CNNNetwork().to(device)
@@ -85,7 +83,5 @@ if __name__ == "__main__":
     train(cnn, train_dataloader, loss_fn, optimiser, device, EPOCHS)
 
     # save model
-    SUBJECT, MODEL_DIR = zss.model_location()
-    MODEL_FILE = f'{MODEL_DIR}cnnnet_{SUBJECT}.pth'
-    torch.save(cnn.state_dict(), MODEL_FILE)
-    print(f'Trained feed forward net saved at {MODEL_FILE}')
+    torch.save(cnn.state_dict(), "feedforwardnet.pth")
+    print("Trained feed forward net saved at feedforwardnet.pth")
