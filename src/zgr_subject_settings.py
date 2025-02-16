@@ -1,6 +1,6 @@
 
-#subject = 'individu'
-subject = 'youtube'
+subject = 'individu'
+# subject = 'youtube'
 
 def file_location(stage: str) -> tuple[str, str]:
     zgr_pad =  'resources/'
@@ -11,7 +11,7 @@ def file_location(stage: str) -> tuple[str, str]:
     return (zgr_audio_dir, zgr_annotations_file)
 
 def model_location() -> tuple[str, str]:
-    zgr_pad =  '/Users/fiederlesje/git/sound_recognition/resources/'
+    zgr_pad =  'resources/'
 
     zgr_model_dir = f'{zgr_pad}{subject}/model/'
 

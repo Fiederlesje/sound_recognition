@@ -7,10 +7,10 @@ import librosa
 HARD_ZACHT = 'hard'
 
 if HARD_ZACHT == 'zacht':
-    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold1/gigantisch_z_002.wav')
+    AUDIO_FILE = os.path.join('resources/audio_files/individu/fold1/gigantisch_z_002.wav')
     AUDIO_LABEL = 'zachte g'
 else:
-    AUDIO_FILE = os.path.join('/Users/fiederlesje/git/sound_recognition/resources/audio_files/individu/fold2/gigantisch_h_002.wav')
+    AUDIO_FILE = os.path.join('resources/audio_files/individu/fold2/gigantisch_h_002.wav')
     AUDIO_LABEL = 'harde g'
 
 #waveform, sample rate
